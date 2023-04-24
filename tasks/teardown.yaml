@@ -1,0 +1,7 @@
+- block:
+  - name: Remove nordvpn
+    ansible.builtin.package:
+      name: nordvpn
+      state: absent
+
+  become: true

@@ -1,0 +1,33 @@
+---
+### disable ipv6 ###
+- name: Disable ipv6
+  block:
+  - name: Disable IPv6
+    ansible.posix.sysctl:
+      name: net.ipv6.conf.all.disable_ipv6
+      value: '1'
+      sysctl_set: true
+      state: present
+      reload: true
+
+  - name: Add disable IPv6 configuration to sysctl.conf
+    ansible.builtin.lineinfile:
+      path: /etc/sysctl.conf
+      regexp: '^net\.ipv6\.conf\.all\.disable_ipv6'
+      line: 'net.ipv6.conf.all.disable_ipv6 = 1'
+      state: present
+  become: true
+
+### install openvpn ###
+- block:
+  - name: Update apt cache
+    ansible.builtin.apt:
+      update_cache: true
+      cache_valid_time: 3600
+    when: ansible_os_family == 'Debian'
+  
+  - name: Install openvpn
+    ansible.builtin.package:
+      name: openvpn
+      state: "{{ 'latest' if nordvpn_action == 'upgrade' else 'present' }}"
+  become: true

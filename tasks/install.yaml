@@ -1,0 +1,68 @@
+---
+- include_tasks: prereqs.yaml
+
+### Debian ###
+- name: Set up APT Repository
+  block:
+  - name: Add NordVPN repository key
+    ansible.builtin.apt_key:
+      url: https://repo.nordvpn.com/gpg/nordvpn_public.asc
+      state: present
+
+  - name: Add NordVPN repository
+    ansible.builtin.apt_repository:
+      repo: "deb https://repo.nordvpn.com/deb/nordvpn/debian stable main"
+      state: present
+
+  - name: Update apt cache 
+    apt:
+      update_cache: true
+      cache_valid_time: 3600
+  when: ansible_os_family == 'Debian'
+  become: true
+
+### Redhat ###  
+- name: Setup Yum Repository
+  block:
+  - name: Add NordVPN repository key
+    ansible.builtin.rpm_key:
+      key: https://repo.nordvpn.com/gpg/nordvpn_public.asc
+      state: present
+
+  - name: Add NordVPN repository
+    ansible.builtin.yum_repository:
+      name: nordvpn
+      description: NordVPN Repository
+      baseurl: https://repo.nordvpn.com/yum/nordvpn/centos/$basearch/
+      gpgcheck: true
+      enabled: true
+      gpgkey: https://repo.nordvpn.com/gpg/nordvpn_public.asc
+  when: ansible_os_family == 'RedHat'
+  become: true
+
+- name: Install and Run NordVPN
+  block:
+  - name: Install NordVPN package
+    ansible.builtin.package:
+      name: nordvpn
+      state: "{{ 'latest' if nordvpn_action == 'upgrade' else 'present' }}"
+
+  - name: Install NordVPN systemd service file
+    ansible.builtin.template:
+      src: nordvpn.service.j2
+      dest: /etc/systemd/system/nordvpn.service
+      owner: root
+      group: root
+      mode: '0644'
+
+  - name: Login to NordVPN with token
+    ansible.builtin.command:
+      cmd: "nordvpn login --token {{ nordvpn_token }}"
+      warn: no
+    no_log: true
+    when: nordvpn_token is defined
+  notify: restart nordvpn
+  become: true
+
+# run restart nordvpn now
+- meta: flush_handlers

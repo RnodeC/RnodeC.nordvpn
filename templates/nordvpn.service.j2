@@ -1,0 +1,20 @@
+[Unit]
+Description=NordVPN
+After=network.target
+
+[Service]
+Type=simple
+User=nordvpn
+Group=nordvpn
+{% if nordvpn_server %}
+Environment="NORDVPN_SERVER={{ nordvpn_server }}"
+ExecStart=/usr/bin/nordvpn connect ${NORDVPN_SERVER}
+{% else %}
+ExecStart=/usr/bin/nordvpn connect
+{% endif %}
+ExecStop=/usr/bin/nordvpn disconnect
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

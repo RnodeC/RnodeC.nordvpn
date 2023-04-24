@@ -1,0 +1,8 @@
+---
+- name: restart nordvpn
+  ansible.builtin.systemd:
+    name: nordvpn
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true

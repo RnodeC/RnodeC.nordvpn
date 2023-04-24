@@ -1,0 +1,12 @@
+galaxy_info:
+  role_name: nordvpn
+  namespace: rnodec
+  author: RnodeC
+  description: configure nordvpn 
+  license: "license (BSD, MIT)"
+
+  min_ansible_version: '2.11'
+  galaxy_tags: 
+  - linux
+
+dependencies: []

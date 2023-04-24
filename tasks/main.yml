@@ -1,0 +1,8 @@
+---
+- name: Install Nordvpn 
+  include_tasks: install.yaml 
+  when: nordvpn_action in ['install', 'upgrade']
+
+- name: Remove Keepalived
+  include_tasks: teardown.yaml
+  when: nordvpn_action == 'teardown'
