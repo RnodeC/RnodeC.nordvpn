@@ -18,7 +18,7 @@
       state: present
   become: true
 
-### install openvpn ###
+### install packages ###
 - block:
   - name: Update apt cache
     ansible.builtin.apt:
@@ -26,8 +26,11 @@
       cache_valid_time: 3600
     when: ansible_os_family == 'Debian'
   
-  - name: Install openvpn
+  - name: Install packages
     ansible.builtin.package:
-      name: openvpn
+      name: "{{ item }}"
       state: "{{ 'latest' if nordvpn_action == 'upgrade' else 'present' }}"
+    with_items:
+    - apt-transport-https
+    - openvpn
   become: true

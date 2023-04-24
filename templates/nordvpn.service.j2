@@ -4,9 +4,9 @@ After=network.target
 
 [Service]
 Type=simple
-User=nordvpn
-Group=nordvpn
-{% if nordvpn_server %}
+User=root
+Group=root
+{% if nordvpn_server is defined %}
 Environment="NORDVPN_SERVER={{ nordvpn_server }}"
 ExecStart=/usr/bin/nordvpn connect ${NORDVPN_SERVER}
 {% else %}

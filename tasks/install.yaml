@@ -58,8 +58,6 @@
   - name: Login to NordVPN with token
     ansible.builtin.command:
       cmd: "nordvpn login --token {{ nordvpn_token }}"
-      warn: no
-    no_log: true
     when: nordvpn_token is defined
   notify: restart nordvpn
   become: true

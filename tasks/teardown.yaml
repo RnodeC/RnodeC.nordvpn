@@ -3,5 +3,10 @@
     ansible.builtin.package:
       name: nordvpn
       state: absent
+  
+  - name: Remove nordvpn service file
+    ansible.builtin.file:
+      name: /etc/systemd/system/nordvpn.service
+      state: absent
 
   become: true
