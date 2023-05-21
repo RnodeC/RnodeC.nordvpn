@@ -4,8 +4,8 @@ on:
     types:
       - opened
       - synchronize
-  schedule:
-    - cron: '30 5 * * 0'
+  #schedule:
+  #  - cron: '30 5 * * 0'
 
 jobs:
   build:
